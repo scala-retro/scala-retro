@@ -26,7 +26,7 @@ object Main extends App{
             println("}")
         }
         c.templ.inits.map(x => x.tpe).foreach(x => {
-            println(c.name + " --|> " + x)
+            println(c.name + " --|> " + x.toString.replace("[", "~").replace("]", "~"))
         })
     }
 
@@ -54,7 +54,7 @@ object Main extends App{
             println("}")
         }
         t.templ.inits.map(x => x.tpe).foreach(x => {
-            println(t.name + " --|> " + x)
+            println(t.name + " --|> " + x.toString.replace("[", "~").replace("]", "~"))
         })
     }
 
@@ -78,6 +78,8 @@ object Main extends App{
     val tree = input.parse[Source].get.children.head
 
     println(tree.structure)
+
+    println("classDiagram")
 
     tree match {
         case c: Defn.Class => {
