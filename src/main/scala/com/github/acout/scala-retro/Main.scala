@@ -21,15 +21,25 @@ object Main extends App{
               case c: Defn.Class => {
                     val tparams = c.tparams.map(x => x.name).mkString(",")
                     val hasTParams = !tparams.isEmpty
-                    c.templ.inits.map(x => x.tpe).foreach(x => {
-                        if(hasTParams){
-                            println(c.name + "~" + tparams + "~ --|> " + x)
-                        }else{
-                            println(c.name + " --|> " + x)
-                        }
-                    })
+                    val hasVals = !c.templ.stats.filter(_.isInstanceOf[Decl.Val]).isEmpty
+                    if(hasTParams){
+                        print("class " + c.name + "~" + tparams + "~")
+                    }else{
+                        print("class " + c.name)
+                    }
+                    if(hasVals){
+                        println("{")
+                    }else{
+                        println("")
+                    }
                     c.templ.stats.foreach(x => x match {
-                        case v: Decl.Val => println(c.name + " --> " + v.decltpe + ": " + v.pats(0).asInstanceOf[Pat.Var].name)
+                        case v: Decl.Val => println("\t" + v.pats(0).asInstanceOf[Pat.Var].name + ": " + v.decltpe)
+                    })
+                    if(hasVals){
+                        println("}")
+                    }
+                    c.templ.inits.map(x => x.tpe).foreach(x => {
+                        println(c.name + " --|> " + x)
                     })
                 }
             })
