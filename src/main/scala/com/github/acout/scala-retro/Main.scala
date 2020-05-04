@@ -1,6 +1,8 @@
+package com.github.acout.scalaretro
+
 import scala.meta._
 import java.nio.file.Path
-import java.io.File
+import java.io.{File, FileWriter}
 
 object Main extends App{
 
@@ -144,10 +146,13 @@ object Main extends App{
     //val path = java.nio.file.Paths.get("src", "main", "resources")
     val files = getAllScalaFiles(path)
 
-    println("classDiagram")
+    val tokens = new ScalaTokenizer().tokenize(files)
+    new MermaidClassDiagramWriter(new FileWriter(new File("output.md"))).write(tokens)
+
+    /*println("classDiagram")
     println(files.map(f => {
         val tree = getTree(f)
         getMermaidFromTree(tree)
-    }).mkString(""))
+    }).mkString(""))*/
 
 }
