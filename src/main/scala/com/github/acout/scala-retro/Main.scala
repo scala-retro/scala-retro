@@ -15,11 +15,14 @@ object Main extends App{
         }
     }
 
-    val path = java.nio.file.Paths.get("..", "unsupervise", "c4e-arch1", "core", "src", "main", "scala")
     //val path = java.nio.file.Paths.get("src", "main", "resources")
+
+    val path = java.nio.file.Paths.get("..", "unsupervise", "c4e-arch1", "arch1", "scala-core", "src", "main", "scala", "core")
     val files = getAllScalaFiles(path)
 
     val tokens = new ScalaTokenizer().tokenize(files)
-    new MermaidClassDiagramWriter(new FileWriter(new File("output.md"))).write(tokens)
+    val writer = new MermaidClassDiagramWriter(new FileWriter(new File("output.md")))
+    writer.write(tokens)
+    writer.close
 
 }

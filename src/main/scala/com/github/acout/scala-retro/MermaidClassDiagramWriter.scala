@@ -14,14 +14,13 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
             case ClassToken(name, attributes, methods) => {
                 fw.write("class " + name)
                 if(!attributes.isEmpty || !methods.isEmpty){
-                    fw.write("{")
+                    fw.write("{\n")
                 }
-                fw.write("\n")
                 attributes.foreach(a => {
-                    fw.write("\t" + a + "\n")
+                    fw.write("\t" + cleanString(a) + "\n")
                 })
                 methods.foreach(m => {
-                    fw.write("\t" + m + "\n")
+                    fw.write("\t" + cleanString(m) + "\n")
                 })
                 if(!attributes.isEmpty || !methods.isEmpty){
                     fw.write("}")
@@ -29,11 +28,11 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
             }
             case InheritanceToken(from, to) => {
                 //TODO: Deal with generics ? How to manage nested generics not supported without loosing first level generics ?
-                fw.write(from + " --|> " + to.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~") + "\n")
+                fw.write(from + " --|> " + cleanString(to))
             }
             case AssociationToken(from, to) => {
                 //TODO: Deal with generics ? How to manage nested generics not supported without loosing first level generics ?
-                fw.write(from + " ---> " + to.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~") + "\n")
+                fw.write(from + " ---> " + cleanString(to))
             }
         }
         fw.write("\n")
@@ -41,6 +40,10 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
 
     def close = {
         fw.close
+    }
+
+    def cleanString(str: String): String = {
+        str.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~")
     }
 
 }

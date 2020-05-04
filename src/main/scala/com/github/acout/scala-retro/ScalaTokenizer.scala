@@ -21,38 +21,41 @@ class ScalaTokenizer {
 
     def tokenize(f: File): List[Token] = {
 
-        val tree = getTree(f)
+        val trees = getTree(f)
 
-        tree match {
-            case c: Defn.Class => {
-                tokenizeClass(c)
-            }
-            case t: Term.Block => {
-                t.children.flatMap(x => x match {
-                    case c: Defn.Class => {
-                        tokenizeClass(c)
-                    }
-                    case tt: Defn.Trait => {
-                        tokenizeTrait(tt)
-                    }
-                    case _ => List[Token]()
-                })
-            }
-            case tt: Defn.Trait => {
-                tokenizeTrait(tt)
-            }
-            case p: Pkg => {
-                p.children.flatMap(x => x match {
+        trees.flatMap(tree => {
+            tree match {
                 case c: Defn.Class => {
-                        tokenizeClass(c)
-                    }
-                    case tt: Defn.Trait => {
-                        tokenizeTrait(tt)
-                    }
-                    case _ => List[Token]()
-                })
+                    tokenizeClass(c)
+                }
+                case t: Term.Block => {
+                    t.children.flatMap(x => x match {
+                        case c: Defn.Class => {
+                            tokenizeClass(c)
+                        }
+                        case tt: Defn.Trait => {
+                            tokenizeTrait(tt)
+                        }
+                        case _ => List[Token]()
+                    })
+                }
+                case tt: Defn.Trait => {
+                    tokenizeTrait(tt)
+                }
+                case p: Pkg => {
+                    p.children.flatMap(x => x match {
+                    case c: Defn.Class => {
+                            tokenizeClass(c)
+                        }
+                        case tt: Defn.Trait => {
+                            tokenizeTrait(tt)
+                        }
+                        case _ => List[Token]()
+                    })
+                }
+                case _ => List[Token]()
             }
-        }
+        })
 
     }
 
@@ -61,7 +64,9 @@ class ScalaTokenizer {
         val bytes = java.nio.file.Files.readAllBytes(path)
         val text = new String(bytes, "UTF-8")
         val input = Input.VirtualFile(path.toString, text)
-        input.parse[Source].get.children.head
+        //val treeChildren = input.parse[Source].get.children
+        //if(treeChildren.isEmpty) Tree else treeChildren.head
+        input.parse[Source].get.children
     }
 
     def tokenizeClass(c: Defn.Class): List[Token] = {
