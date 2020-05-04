@@ -17,6 +17,7 @@ sealed trait Token
 case class ClassToken(name: String, attributes: List[Attribute], methods: List[Method]) extends Token
 case class InheritanceToken(child: String, parent: String) extends Token
 case class AssociationToken(source: String, target: String) extends Token
+case class DependencyToken(source: String, target: String) extends Token
 
 trait Tokenizer {
 
@@ -106,9 +107,14 @@ class ScalaTokenizer {
             InheritanceToken(c.name.toString, xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
         })
         val associationTokens = attributes.map(a => {
-            AssociationToken(c.name.toString, a.name)
-        })
-        List(classToken) ++ inheritanceTokens ++ associationTokens
+            AssociationToken(c.name.toString, a.t)
+        }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
+        val dependencyTokens = methods.flatMap(m => {
+            m.params.flatMap(plist => {
+                plist.map(p => DependencyToken(c.name.toString, p.t))
+            }) 
+        }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
+        List(classToken) ++ inheritanceTokens ++ associationTokens ++ dependencyTokens
     }
 
     def tokenizeTrait(c: Defn.Trait): List[Token] = {
@@ -139,9 +145,14 @@ class ScalaTokenizer {
             InheritanceToken(c.name.toString, xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
         })
         val associationTokens = attributes.map(a => {
-            AssociationToken(c.name.toString, a.t)
-        }).filter(_.target.matches("^[a-zA-Z][^=]*"))
-        List(classToken) ++ inheritanceTokens ++ associationTokens
+            AssociationToken(c.name.toString, a.t) 
+        }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
+        val dependencyTokens = methods.flatMap(m => {
+            m.params.flatMap(plist => {
+                plist.map(p => DependencyToken(c.name.toString, p.t))
+            }) 
+        }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
+        List(classToken) ++ inheritanceTokens ++ associationTokens ++ dependencyTokens
     }
 
 }

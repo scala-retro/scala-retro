@@ -14,6 +14,7 @@ object Main extends App{
             case ClassToken(name, _, _) => name.matches(regex)
             case InheritanceToken(from, to) => from.matches(regex) && to.matches(regex)
             case AssociationToken(from, to) => from.matches(regex) && to.matches(regex)
+            case DependencyToken(from, to) => from.matches(regex) && to.matches(regex)
         }
     }))
     writer.close

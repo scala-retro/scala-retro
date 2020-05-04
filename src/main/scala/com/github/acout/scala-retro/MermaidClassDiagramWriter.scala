@@ -34,6 +34,10 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
                 //TODO: Deal with generics ? How to manage nested generics not supported without loosing first level generics ?
                 fw.write(from + " --> " + cleanString/*Association*/(to))
             }
+            case DependencyToken(from, to) => {
+                //TODO: Deal with generics ? How to manage nested generics not supported without loosing first level generics ?
+                fw.write(from + " ..> " + cleanString/*Association*/(to))
+            }
         }
         fw.write("\n")
     }
@@ -50,7 +54,7 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
         }else{
             str
         }
-        sstr/*.replace("[", "(").replace("]", ")")*/.replace(" ", "").replace("[", "~").replace("]", "~").replace(".", "_")
+        sstr/*.replace("[", "(").replace("]", ")")*/.replace(" ", "").replace("[", "~").replace("]", "~").replace(".", "_").replace("*", "")
     }
 
 }
