@@ -17,10 +17,10 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
                     fw.write("{\n")
                 }
                 attributes.foreach(a => {
-                    fw.write("\t" + cleanString(a) + "\n")
+                    fw.write("\t" + cleanString(a.name) + ": " + cleanString(a.t) + "\n")
                 })
                 methods.foreach(m => {
-                    fw.write("\t" + cleanString(m) + "\n")
+                    fw.write("\t" + cleanString(m.name) + "(" + m.params.map(_.map(p => cleanString(p.name) + ": " + cleanString(p.t)).mkString(", ")).mkString(")(") + "): " + cleanString(m.returnType) + "\n")
                 })
                 if(!attributes.isEmpty || !methods.isEmpty){
                     fw.write("}")
