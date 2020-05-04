@@ -112,7 +112,7 @@ class ScalaTokenizer {
         val dependencyTokens = methods.flatMap(m => {
             m.params.flatMap(plist => {
                 plist.map(p => DependencyToken(c.name.toString, p.t))
-            }) 
+            }) ++ List(DependencyToken(c.name.toString, m.returnType)) 
         }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
         List(classToken) ++ inheritanceTokens ++ associationTokens ++ dependencyTokens
     }

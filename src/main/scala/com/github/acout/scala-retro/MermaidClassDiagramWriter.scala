@@ -54,7 +54,7 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
         }else{
             str
         }
-        sstr/*.replace("[", "(").replace("]", ")")*/.replace(" ", "").replace("[", "~").replace("]", "~").replace(".", "_").replace("*", "")
+        sstr/*.replace("[", "(").replace("]", ")")*/.replace(" ", "").replace("[", "~").replace("]", "~").replace(".", "_").replace("*", "").replaceAll("Some\\((.*)\\)", "$1")
     }
 
 }
