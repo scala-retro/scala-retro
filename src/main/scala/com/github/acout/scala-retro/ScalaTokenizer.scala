@@ -25,7 +25,8 @@ trait Tokenizer {
 
 }
 
-class ScalaTokenizer {
+class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = true, outputInheritancies: Boolean = true, 
+                     outputAssociations: Boolean = true, outputDependencies: Boolean = true) {
 
     def tokenize(lf: List[File]): List[Token] = lf.flatMap(f => tokenize(f))
 
@@ -97,9 +98,9 @@ class ScalaTokenizer {
         })
         val classToken: ClassToken = 
             if(hasTParams){
-                ClassToken(c.name.toString/* + "~" + tparams + "~"*/, attributes, methods)
+                ClassToken(c.name.toString/* + "~" + tparams + "~"*/, if(outputAttributes) attributes else List[Attribute](), if(outputMethods) methods else List[Method]())
             }else{
-                ClassToken(c.name.toString, attributes, methods)
+                ClassToken(c.name.toString, if(outputAttributes) attributes else List[Attribute](), if(outputMethods) methods else List[Method]())
             }
         val inheritanceTokens = c.templ.inits.map(x => x.tpe).map(x => {
             val indexOfGeneric = x.toString.indexOf("[")
@@ -114,7 +115,10 @@ class ScalaTokenizer {
                 plist.map(p => DependencyToken(c.name.toString, p.t))
             }) ++ List(DependencyToken(c.name.toString, m.returnType)) 
         }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
-        List(classToken) ++ inheritanceTokens ++ associationTokens ++ dependencyTokens
+        List(classToken) ++ 
+            {if(outputInheritancies) inheritanceTokens else List[Token]()} ++ 
+            {if(outputAssociations) associationTokens else List[Token]()} ++ 
+            {if(outputDependencies) dependencyTokens else List[Token]()}
     }
 
     def tokenizeTrait(c: Defn.Trait): List[Token] = {
@@ -135,9 +139,9 @@ class ScalaTokenizer {
         })
         val classToken: ClassToken = 
             if(hasTParams){
-                ClassToken(c.name.toString/* + "~" + tparams + "~"*/, attributes, methods)
+                ClassToken(c.name.toString/* + "~" + tparams + "~"*/, if(outputAttributes) attributes else List[Attribute](), if(outputMethods) methods else List[Method]())
             }else{
-                ClassToken(c.name.toString, attributes, methods)
+                ClassToken(c.name.toString, if(outputAttributes) attributes else List[Attribute](), if(outputMethods) methods else List[Method]())
             }
         val inheritanceTokens = c.templ.inits.map(x => x.tpe).map(x => {
             val indexOfGeneric = x.toString.indexOf("[")
@@ -145,14 +149,17 @@ class ScalaTokenizer {
             InheritanceToken(c.name.toString, xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
         })
         val associationTokens = attributes.map(a => {
-            AssociationToken(c.name.toString, a.t) 
+            AssociationToken(c.name.toString, a.t)
         }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
         val dependencyTokens = methods.flatMap(m => {
             m.params.flatMap(plist => {
                 plist.map(p => DependencyToken(c.name.toString, p.t))
-            }) 
+            }) ++ List(DependencyToken(c.name.toString, m.returnType)) 
         }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
-        List(classToken) ++ inheritanceTokens ++ associationTokens ++ dependencyTokens
+        List(classToken) ++ 
+            {if(outputInheritancies) inheritanceTokens else List[Token]()} ++ 
+            {if(outputAssociations) associationTokens else List[Token]()} ++ 
+            {if(outputDependencies) dependencyTokens else List[Token]()}
     }
 
 }
