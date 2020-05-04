@@ -19,6 +19,11 @@ case class InheritanceToken(child: String, parent: String) extends Token
 case class AssociationToken(source: String, target: String) extends Token
 case class DependencyToken(source: String, target: String) extends Token
 
+/*case class Tokens(tokens: List[Token]){
+    def ++(otherTokens: Tokens) = Tokens(tokens ++ otherTokens.tokens)
+    def filter(fun: Token => Boolean) = tokens.filter(fun)
+}*/
+
 trait Tokenizer {
 
     def tokenize(f: File): List[Token]

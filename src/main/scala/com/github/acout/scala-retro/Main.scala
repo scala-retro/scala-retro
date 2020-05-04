@@ -9,14 +9,8 @@ object Main extends App{
     val files = Utils.getAllScalaFiles(new File(args.head).toPath)
     val tokens = new ScalaTokenizer().tokenize(files)
     val writer = new MermaidClassDiagramWriter(new FileWriter(new File(args(1))))
-    writer.write(tokens.filter(t => {
-        t match {
-            case ClassToken(name, _, _) => name.matches(regex)
-            case InheritanceToken(from, to) => from.matches(regex) && to.matches(regex)
-            case AssociationToken(from, to) => from.matches(regex) && to.matches(regex)
-            case DependencyToken(from, to) => from.matches(regex) && to.matches(regex)
-        }
-    }))
+    val nameFilter = NameFilter(regex) _
+    writer.write(tokens.filter(nameFilter))
     writer.close
 
 }
