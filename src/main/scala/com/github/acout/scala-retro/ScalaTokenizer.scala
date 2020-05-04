@@ -105,7 +105,10 @@ class ScalaTokenizer {
             val xx = if(indexOfGeneric >= 0) x.toString.slice(0, indexOfGeneric) else x.toString
             InheritanceToken(c.name.toString, xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
         })
-        List(classToken) ++ inheritanceTokens
+        val associationTokens = attributes.map(a => {
+            AssociationToken(c.name.toString, a.name)
+        })
+        List(classToken) ++ inheritanceTokens ++ associationTokens
     }
 
     def tokenizeTrait(c: Defn.Trait): List[Token] = {
@@ -135,7 +138,10 @@ class ScalaTokenizer {
             val xx = if(indexOfGeneric >= 0) x.toString.slice(0, indexOfGeneric) else x.toString
             InheritanceToken(c.name.toString, xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
         })
-        List(classToken) ++ inheritanceTokens
+        val associationTokens = attributes.map(a => {
+            AssociationToken(c.name.toString, a.t)
+        }).filter(_.target.matches("^[a-zA-Z][^=]*"))
+        List(classToken) ++ inheritanceTokens ++ associationTokens
     }
 
 }

@@ -32,7 +32,7 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
             }
             case AssociationToken(from, to) => {
                 //TODO: Deal with generics ? How to manage nested generics not supported without loosing first level generics ?
-                fw.write(from + " ---> " + cleanString(to))
+                fw.write(from + " --> " + cleanString/*Association*/(to))
             }
         }
         fw.write("\n")
@@ -43,7 +43,14 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
     }
 
     def cleanString(str: String): String = {
-        str.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~")
+        val sstr = if(str.contains("[")){
+            val firstIndex = str.indexOf("[")
+            val lastIndex = str.lastIndexOf("]")
+            str.slice(0, firstIndex + 1) + str.slice(firstIndex + 1, lastIndex).replace("[", "_").replace("]", "_") + str.slice(lastIndex, str.length)
+        }else{
+            str
+        }
+        sstr/*.replace("[", "(").replace("]", ")")*/.replace(" ", "").replace("[", "~").replace("]", "~").replace(".", "_")
     }
 
 }
