@@ -11,7 +11,7 @@ libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.10"
 organization := "com.github.acout"
 licenses += ("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 bintrayRepository := "maven"
-bintrayOrganization := "anthonycoutant"
+bintrayOrganization := Some("anthonycoutant")
 
 developers := List(
   Developer(
