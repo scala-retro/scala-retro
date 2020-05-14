@@ -1,4 +1,6 @@
-package com.github.acout.scalaretro
+package com.github.acout.scalaretro.core.filter
+
+import com.github.acout.scalaretro.core.token._
 
 object NameFilter{
 
