@@ -2,9 +2,16 @@ import Keys._
 
 name := "scala-retro"
 
-version := "0.1"
+version := "0.1.1"
 
 scalaVersion := "2.11.12"
+
+lazy val scala213 = "2.13.2"
+lazy val scala212 = "2.12.11"
+lazy val scala211 = "2.11.12"
+lazy val supportedScalaVersions = List(scala213, scala212, scala211)
+
+crossScalaVersions := supportedScalaVersions
 
 libraryDependencies += "org.scalameta" %% "scalameta" % "4.3.10"
 
