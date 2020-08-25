@@ -16,13 +16,13 @@ ThisBuild / publishArtifact in Test := false
 // Bintray
 ThisBuild / bintrayPackageLabels := Seq("scala", "sbt")
 ThisBuild / bintrayRepository := "maven"
-ThisBuild / bintrayOrganization := Some("anthonycoutant")
+ThisBuild / bintrayOrganization := Some("acout")
 ThisBuild / developers := List(
   Developer(
     id    = "acout",
     name  = "Anthony Coutant",
-    email = "ac@anthonycoutant.me",
-    url   = url("http://anthonycoutant.me")
+    email = "ac@anthonycoutant.com",
+    url   = url("http://anthonycoutant.com")
   )
 )
 ThisBuild / licenses += ("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
