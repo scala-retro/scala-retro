@@ -12,10 +12,10 @@ Currently, only Scala language source codes can be tokenized and outputing is pe
 To begin using the package, setup your `build.sbt` by adding the following for the latest version:
 
 ```scala
-resolvers += Resolver.bintrayRepo("anthonycoutant", "maven")
-libraryDependencies += "com.github.acout" %% "scala-retro-core" % "0.1.3"
+resolvers += Resolver.bintrayRepo("acout", "maven")
+libraryDependencies += "com.github.acout" %% "scala-retro-core" % "0.1.4"
 //Optional: only to use the default CLI
-libraryDependencies += "com.github.acout" %% "scala-retro-cli" % "0.1.3"
+libraryDependencies += "com.github.acout" %% "scala-retro-cli" % "0.1.4"
 ```
 
 ### Basic Diagram Generation With Code
