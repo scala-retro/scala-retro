@@ -13,7 +13,7 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
 
     def write(token: Token): Unit = {
         token match {
-            case ClassToken(name, attributes, methods) => {
+            case ClassToken(name, attributes, methods, _) => {
                 fw.write("class " + name)
                 if(!attributes.isEmpty || !methods.isEmpty){
                     fw.write("{\n")
