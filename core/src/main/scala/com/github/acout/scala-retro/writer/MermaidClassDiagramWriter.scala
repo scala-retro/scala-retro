@@ -1,8 +1,18 @@
 package com.github.acout.scalaretro.core.writer
 
 import com.github.acout.scalaretro.core.token._
+import java.io.{File, FileWriter}
 
-import java.io.FileWriter
+object MermaidClassDiagramWriter {
+    def write(tokens: List[Token], fw: FileWriter): Unit = new MermaidClassDiagramWriter(fw) {
+        write(tokens)
+        close
+    }
+
+    def write(tokens: List[Token], f: File): Unit = write(tokens, new FileWriter(f))
+
+    def write(tokens: List[Token], fn: String): Unit = write(tokens, new FileWriter(fn))
+}
 
 class MermaidClassDiagramWriter(fw: FileWriter, escapeHtml: Boolean = false) {
 
