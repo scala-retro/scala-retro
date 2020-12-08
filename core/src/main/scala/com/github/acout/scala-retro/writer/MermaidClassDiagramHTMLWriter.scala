@@ -4,6 +4,7 @@ import java.io.FileWriter
 
 private object MermaidClassDiagramHTMLWriter {
   private val htmlTemplateHeader: String = s"""<html>
+                       |  <head><meta http-equiv=“Content-Type” content=“text/html; charset=utf-8”></head>
                        |  <body>
                        |    %s
                        |    <script>mermaid.initialize({startOnLoad:true});</script>
@@ -19,7 +20,7 @@ private object MermaidClassDiagramHTMLWriter {
   def htmlTemplateHeaderLocal: String = htmlTemplateHeader.format("<script>" + scala.io.Source.fromInputStream(getClass.getResourceAsStream("/mermaid.min.js")).getLines.mkString("\n") + "</script>")
 }
 
-class MermaidClassDiagramHTMLWriter(fw: FileWriter, local: Boolean = true) extends MermaidClassDiagramWriter(fw) {
+class MermaidClassDiagramHTMLWriter(fw: FileWriter, local: Boolean = true) extends MermaidClassDiagramWriter(fw, true) {
 
   fw.write(if (local) MermaidClassDiagramHTMLWriter.htmlTemplateHeaderLocal else MermaidClassDiagramHTMLWriter.htmlTemplateHeaderDist)
 

@@ -4,7 +4,7 @@ import com.github.acout.scalaretro.core.token._
 
 import java.io.FileWriter
 
-class MermaidClassDiagramWriter(fw: FileWriter) {
+class MermaidClassDiagramWriter(fw: FileWriter, escapeHtml: Boolean = false) {
 
     def write(tokens: List[Token], includeHeader: Boolean = true): Unit = {
         if(includeHeader) fw.write("classDiagram\n")
@@ -13,18 +13,22 @@ class MermaidClassDiagramWriter(fw: FileWriter) {
 
     def write(token: Token): Unit = {
         token match {
-            case ClassToken(name, attributes, methods, _) => {
+            case ClassToken(name, attributes, methods, _, classType) => {
                 fw.write("class " + name)
-                if(!attributes.isEmpty || !methods.isEmpty){
+                if(!attributes.isEmpty || !methods.isEmpty || classType.repr.nonEmpty){
                     fw.write("{\n")
                 }
+                if (escapeHtml)
+                  fw.write("\t " + classType.repr.replace("<", "&lt;").replace(">", "&gt;") + "\n")
+                else
+                  fw.write("\t " + classType.repr + "\n")
                 attributes.foreach(a => {
-                    fw.write("\t" + cleanString(a.name) + ": " + cleanString(a.t) + "\n")
+                    fw.write("\t" + s" ${a.encapsulation.repr}" + cleanString(a.name) + ": " + cleanString(a.t) + "\n")
                 })
                 methods.foreach(m => {
-                    fw.write("\t" + cleanString(m.name) + "(" + m.params.map(_.map(p => cleanString(p.name) + ": " + cleanString(p.t)).mkString(", ")).mkString(")(") + "): " + cleanString(m.returnType) + "\n")
+                    fw.write("\t" + s" ${m.encapsulation.repr}" + cleanString(m.name) + "(" + m.params.map(_.map(p => cleanString(p.name) + ": " + cleanString(p.t)).mkString(", ")).mkString(")(") + "): " + cleanString(m.returnType) + "\n")
                 })
-                if(!attributes.isEmpty || !methods.isEmpty){
+                if(!attributes.isEmpty || !methods.isEmpty || classType.repr.nonEmpty){
                     fw.write("}")
                 }
             }
