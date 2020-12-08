@@ -9,7 +9,7 @@ object Utils {
             if (!d.exists || !d.isDirectory) {
                 List[File]()
             } else {
-                d.listFiles.filter(_.isFile).toList ++ d.listFiles.filter(_.isDirectory).flatMap(d => getAllScalaFiles(d.toPath))
+                d.listFiles.filter(_.isFile).toList.filter(_.getName.endsWith(".scala")) ++ d.listFiles.filter(_.isDirectory).flatMap(d => getAllScalaFiles(d.toPath))
             }
         }
         val f = p.toFile

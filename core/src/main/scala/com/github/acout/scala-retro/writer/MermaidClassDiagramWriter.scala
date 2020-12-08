@@ -66,7 +66,7 @@ class MermaidClassDiagramWriter(fw: FileWriter, escapeHtml: Boolean = false) {
         val sstr = if(str.contains("[")){
             val firstIndex = str.indexOf("[")
             val lastIndex = str.lastIndexOf("]")
-            str.slice(0, firstIndex + 1) + str.slice(firstIndex + 1, lastIndex).replace("[", "_").replace("]", "_") + str.slice(lastIndex, str.length)
+            str.slice(0, firstIndex + 1) + str.slice(firstIndex + 1, lastIndex).replace("[", if (escapeHtml) "&lt;" else "<").replace("]", if (escapeHtml) "&gt;" else ">") + str.slice(lastIndex, str.length)
         }else{
             str
         }

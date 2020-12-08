@@ -101,10 +101,10 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
 
         // Add support for all types of attributes
         val attributes = c.templ.stats.collect {
-            case x @ (_: Decl.Val) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString(), getEncapsulation(x.mods))
-            case x @ (_: Defn.Val) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
-            case x @ (_: Decl.Var) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString, getEncapsulation(x.mods))
-            case x @ (_: Defn.Var) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
+            case x @ (_: Decl.Val) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString(), getEncapsulation(x.mods))
+            case x @ (_: Defn.Val) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
+            case x @ (_: Decl.Var) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString, getEncapsulation(x.mods))
+            case x @ (_: Defn.Var) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
         }
         /*
         val attributes = c.templ.stats.filter(_.isInstanceOf[Decl.Val]).map(x => {
@@ -151,10 +151,10 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
         val hasDefs = !c.templ.stats.filter(_.isInstanceOf[Defn.Def]).isEmpty
         // Add support for all types of attributes
         val attributes = c.templ.stats.collect {
-            case x @ (_: Decl.Val) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString(), getEncapsulation(x.mods))
-            case x @ (_: Defn.Val) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
-            case x @ (_: Decl.Var) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString, getEncapsulation(x.mods))
-            case x @ (_: Defn.Var) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
+            case x @ (_: Decl.Val) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString(), getEncapsulation(x.mods))
+            case x @ (_: Defn.Val) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
+            case x @ (_: Decl.Var) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString, getEncapsulation(x.mods))
+            case x @ (_: Defn.Var) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
         }
         /*
         val attributes = c.templ.stats.filter(_.isInstanceOf[Decl.Val]).map(x => {
@@ -199,10 +199,10 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
         val hasDefs = !c.templ.stats.filter(_.isInstanceOf[Defn.Def]).isEmpty
         // Add support for all types of attributes
         val attributes = c.templ.stats.collect {
-            case x @ (_: Decl.Val) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString(), getEncapsulation(x.mods))
-            case x @ (_: Defn.Val) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
-            case x @ (_: Decl.Var) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString, getEncapsulation(x.mods))
-            case x @ (_: Defn.Var) => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
+            case x @ (_: Decl.Val) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString(), getEncapsulation(x.mods))
+            case x @ (_: Defn.Val) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
+            case x @ (_: Decl.Var) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.toString, getEncapsulation(x.mods))
+            case x @ (_: Defn.Var) if x.pats.head.isInstanceOf[Pat.Var] => Attribute(x.pats.head.asInstanceOf[Pat.Var].name.toString, x.decltpe.getOrElse("").toString, getEncapsulation(x.mods))
         }
         /*
         val attributes = c.templ.stats.filter(_.isInstanceOf[Decl.Val]).map(x => {
