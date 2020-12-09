@@ -6,7 +6,15 @@ import com.github.acout.scalaretro.core.token.Token
 
 object MermaidClassDiagramHTMLWriter {
   private val htmlTemplateHeader: String = s"""<html>
-                       |  <head><meta http-equiv=“Content-Type” content=“text/html; charset=utf-8”></head>
+                       |  <head>
+                       |    <meta http-equiv=“Content-Type” content=“text/html; charset=utf-8”>
+                       |    <style>
+                       |      .mermaid > * {
+                       |        height: 100%%;
+                       |        width: auto;
+                       |      }
+                       |    </style>
+                       |  </head>
                        |  <body>
                        |    %s
                        |    <script>mermaid.initialize({startOnLoad:true});</script>
