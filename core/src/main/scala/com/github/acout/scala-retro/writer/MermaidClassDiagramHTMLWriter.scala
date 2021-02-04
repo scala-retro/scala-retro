@@ -17,7 +17,10 @@ object MermaidClassDiagramHTMLWriter {
                        |  </head>
                        |  <body>
                        |    %s
-                       |    <script>mermaid.initialize({startOnLoad:true});</script>
+                       |    <script>mermaid.initialize({
+                       |    startOnLoad:true,
+                       |    maxTextSize: 90000
+                       |    });</script>
                        |
                        |    <div class="mermaid">
                        """.stripMargin

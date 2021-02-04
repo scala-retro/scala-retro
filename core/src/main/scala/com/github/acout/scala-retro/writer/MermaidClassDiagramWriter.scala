@@ -16,6 +16,18 @@ object MermaidClassDiagramWriter {
 
 class MermaidClassDiagramWriter(fw: FileWriter, escapeHtml: Boolean = false) {
 
+    private def encapsulationRepr(encapsulation: Encapsulation): String = encapsulation match {
+        case Private => "-"
+        case Public => "+"
+        case Protected => "#"
+    }
+
+    private def classTypeRepr(classType: ClassType): String = classType match {
+      case ClassT => ""
+      case TraitT => "<<trait>>"
+      case ObjectT => "<<object>>"
+    }
+
     def write(tokens: List[Token], includeHeader: Boolean = true): Unit = {
         if(includeHeader) fw.write("classDiagram\n")
         tokens.foreach(x => write(x))
@@ -25,20 +37,22 @@ class MermaidClassDiagramWriter(fw: FileWriter, escapeHtml: Boolean = false) {
         token match {
             case ClassToken(name, attributes, methods, _, classType) => {
                 fw.write("class " + name)
-                if(!attributes.isEmpty || !methods.isEmpty || classType.repr.nonEmpty){
+                if(!attributes.isEmpty || !methods.isEmpty || classTypeRepr(classType).nonEmpty){
                     fw.write("{\n")
                 }
-                if (escapeHtml)
-                  fw.write("\t " + classType.repr.replace("<", "&lt;").replace(">", "&gt;") + "\n")
-                else
-                  fw.write("\t " + classType.repr + "\n")
+                if (classTypeRepr(classType).nonEmpty) {
+                    if (escapeHtml)
+                        fw.write("\t " + classTypeRepr(classType).replace("<", "&lt;").replace(">", "&gt;") + "\n")
+                    else
+                        fw.write("\t " + classTypeRepr(classType) + "\n")
+                }
                 attributes.foreach(a => {
-                    fw.write("\t" + s" ${a.encapsulation.repr}" + cleanString(a.name) + ": " + cleanString(a.t) + "\n")
+                    fw.write("\t" + s" ${encapsulationRepr(a.encapsulation)}" + cleanString(a.name) + ": " + cleanString(a.t) + "\n")
                 })
                 methods.foreach(m => {
-                    fw.write("\t" + s" ${m.encapsulation.repr}" + cleanString(m.name) + "(" + m.params.map(_.map(p => cleanString(p.name) + ": " + cleanString(p.t)).mkString(", ")).mkString(")(") + "): " + cleanString(m.returnType) + "\n")
+                    fw.write("\t" + s" ${encapsulationRepr(m.encapsulation)}" + cleanString(m.name) + "(" + m.params.map(_.map(p => cleanString(p.name) + ": " + cleanString(p.t)).mkString(", ")).mkString(")(") + "): " + cleanString(m.returnType) + "\n")
                 })
-                if(!attributes.isEmpty || !methods.isEmpty || classType.repr.nonEmpty){
+                if(!attributes.isEmpty || !methods.isEmpty || classTypeRepr(classType).nonEmpty){
                     fw.write("}")
                 }
             }

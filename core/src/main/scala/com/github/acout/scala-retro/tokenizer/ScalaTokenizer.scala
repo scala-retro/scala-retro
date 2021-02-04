@@ -2,10 +2,9 @@ package com.github.acout.scalaretro.core.tokenizer
 
 import com.github.acout.scalaretro.core.token._
 
-import scala.meta.{Decl, Defn, Input, Mod, Pat, Pkg, Source, Term}
+import scala.meta.{Decl, Defn, Input, Mod, Pat, Pkg, Source, Term, Tree}
 import java.nio.file.Path
 import java.io.File
-
 import scala.meta.Mod.{Case, ValParam, VarParam}
 
 class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = true, outputInheritancies: Boolean = true,
@@ -24,12 +23,16 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
         val className = tokens.collect{case ClassToken(name, _, _, _, _) => name}
         tokens.flatMap{
             case DependencyToken(source, target) => className.filter(name => name==target || s"""(\\[$name(\\[.*\\])?\\])|($name\\[.*\\])""".r.findFirstIn(target).isDefined).map(newTarget => DependencyToken(source, newTarget))
-            case AssociationToken(source, target) => className.filter(name => name==target || s"""(\\[$name(\\[.*\\])?\\])|($name\\[.*\\])""".r.findFirstIn(target).isDefined).map(newTarget => DependencyToken(source, newTarget))
+            case AssociationToken(source, target) => className.filter(name => name==target || s"""(\\[$name(\\[.*\\])?\\])|($name\\[.*\\])""".r.findFirstIn(target).isDefined).map(newTarget => AssociationToken(source, newTarget))
             case t @ _ => List(t)
         }.distinct
     }
 
     def tokenize(f: File): List[Token] = {
+        val isCompanion: (Defn.Object, List[Tree]) => Boolean = (o, t) => t.exists {
+            case c: Defn.Class => o.name.value == c.name.value
+            case _ => false
+        }
 
         val trees = getTree(f)
 
@@ -39,7 +42,7 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
                     tokenizeClass(c)
                 }
                 case o: Defn.Object if outputObjects => {
-                    tokenizeObject(o)
+                    tokenizeObject(o, None, isCompanion(o,trees))
                 }
                 case t: Term.Block => {
                     t.children.flatMap(x => x match {
@@ -50,7 +53,7 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
                             tokenizeTrait(tt)
                         }
                         case o: Defn.Object if outputObjects => {
-                            tokenizeObject(o)
+                            tokenizeObject(o, None, isCompanion(o, t.children))
                         }
                         case _ => List[Token]()
                     })
@@ -67,7 +70,7 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
                             tokenizeTrait(tt, if (outputPackages) Some(p.ref.toString()) else None)
                         }
                     case o: Defn.Object if outputObjects => {
-                        tokenizeObject(o, if (outputPackages) Some(p.ref.toString()) else None)
+                        tokenizeObject(o, if (outputPackages) Some(p.ref.toString()) else None, isCompanion(o, p.children))
                     }
                         case _ => List[Token]()
                     })
@@ -194,7 +197,7 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
             {if(outputDependencies) dependencyTokens else List[Token]()}
     }
 
-    def tokenizeObject(c: Defn.Object, pkg: Option[String] = None): List[Token] = {
+    def tokenizeObject(c: Defn.Object, pkg: Option[String] = None, isCompanion: Boolean): List[Token] = {
         val hasVals = !c.templ.stats.filter(_.isInstanceOf[Decl.Val]).isEmpty
         val hasDefs = !c.templ.stats.filter(_.isInstanceOf[Defn.Def]).isEmpty
         // Add support for all types of attributes
@@ -217,19 +220,19 @@ class ScalaTokenizer(outputAttributes: Boolean = true, outputMethods: Boolean = 
             })
             Method(f.name.toString, params, f.decltpe.toString, getEncapsulation(f.mods))
         })
-        val classToken: ClassToken = ClassToken(c.name.toString, if(outputAttributes) attributes else List[Attribute](), if(outputMethods) methods else List[Method](), pkg, ObjectT)
+        val classToken: ClassToken = ClassToken(c.name.toString.concat(if (isCompanion) "ᶜᵒ" else ""), if(outputAttributes) attributes else List[Attribute](), if(outputMethods) methods else List[Method](), pkg, ObjectT)
         val inheritanceTokens = c.templ.inits.map(x => x.tpe).map(x => {
             val indexOfGeneric = x.toString.indexOf("[")
             val xx = if(indexOfGeneric >= 0) x.toString.slice(0, indexOfGeneric) else x.toString
-            InheritanceToken(c.name.toString, xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
+            InheritanceToken(c.name.toString.concat(if (isCompanion) "ᶜᵒ" else ""), xx.toString.replace("[", "(").replace("]", ")").replace(" ", "").replace("~~", "~"))
         })
         val associationTokens = attributes.map(a => {
-            AssociationToken(c.name.toString, a.t)
+            AssociationToken(c.name.toString.concat(if (isCompanion) "ᶜᵒ" else ""), a.t)
         }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
         val dependencyTokens = methods.flatMap(m => {
             m.params.flatMap(plist => {
-                plist.map(p => DependencyToken(c.name.toString, p.t))
-            }) ++ List(DependencyToken(c.name.toString, m.returnType))
+                plist.map(p => DependencyToken(c.name.toString.concat(if (isCompanion) "ᶜᵒ" else ""), p.t))
+            }) ++ List(DependencyToken(c.name.toString.concat(if (isCompanion) "ᶜᵒ" else ""), m.returnType))
         }).filter(_.target.matches("^[a-zA-Z][^=<]*"))
         List(classToken) ++
           {if(outputInheritancies) inheritanceTokens else List[Token]()} ++
