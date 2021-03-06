@@ -6,9 +6,21 @@ import com.github.acout.scalaretro.core.token.Token
 
 object MermaidClassDiagramHTMLWriter {
   private val htmlTemplateHeader: String = s"""<html>
+                       |  <head>
+                       |    <meta http-equiv=“Content-Type” content=“text/html; charset=utf-8”>
+                       |    <style>
+                       |      .mermaid > * {
+                       |        height: 100%%;
+                       |        width: auto;
+                       |      }
+                       |    </style>
+                       |  </head>
                        |  <body>
                        |    %s
-                       |    <script>mermaid.initialize({startOnLoad:true});</script>
+                       |    <script>mermaid.initialize({
+                       |    startOnLoad:true,
+                       |    maxTextSize: 90000
+                       |    });</script>
                        |
                        |    <div class="mermaid">
                        """.stripMargin
@@ -34,7 +46,7 @@ object MermaidClassDiagramHTMLWriter {
   def write(tokens: List[Token], fn: String): Unit = write(tokens, new FileWriter(fn), local = true)
 }
 
-class MermaidClassDiagramHTMLWriter(fw: FileWriter, local: Boolean = true) extends MermaidClassDiagramWriter(fw) {
+class MermaidClassDiagramHTMLWriter(fw: FileWriter, local: Boolean = true) extends MermaidClassDiagramWriter(fw, true) {
 
   fw.write(if (local) MermaidClassDiagramHTMLWriter.htmlTemplateHeaderLocal else MermaidClassDiagramHTMLWriter.htmlTemplateHeaderDist)
 
